@@ -35,10 +35,7 @@ function squarePromise(numberPromise){
       }else if(!Number.isNaN(parseInt(result))){
         return Math.pow(parseInt(result), 2);
       }else{
-        //--------------
-        // ahhhhhhhhh i don't know how I can do the promise reject if a result is not numeric... 
-        // -------------
-        throw new Error(Promise.reject(`Cannot convert ${result} to a number!`));
+        return Promise.reject(`Cannot convert '${result}' to a number!`);
       }
     })
 }
@@ -61,10 +58,6 @@ function squarePromiseOrZero(promise){
  * @returns {Promise}
  */
 function switcheroo(promise){
-  // maybe I'll return a new promise
-  // it'll resolve with the catch param promise
-  // and reject with the then of param promise
-  // return promise.then((success)=>{}, (failure)=>{});
   return new Promise((resolve, reject) => {
     promise.then((success)=>{
       reject(success);
