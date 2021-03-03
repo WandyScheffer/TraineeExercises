@@ -1,4 +1,5 @@
 const Modelo = require('./ModeloTabelaFornecedor');
+const NaoEncontrado = require('../../erros/NaoEncontrado');
 
 module.exports = {
     listar(){
@@ -9,7 +10,7 @@ module.exports = {
     },
     async buscaPorId(id){
         const encontrado = await Modelo.findByPk(id);
-        if (!encontrado) throw new Error('Fornecedor não encontrado');
+        if (!encontrado) throw new NaoEncontrado();
         
         return encontrado;
     },
