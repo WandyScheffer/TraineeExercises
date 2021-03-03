@@ -14,7 +14,7 @@ route.get('/:title', async (req, res) => {
         res.send(JSON.stringify(response.data.Search));
     } catch (error) {
         console.log(error);
-        res.send('Ocorreu um erro!!')
+        res.status(400).send(JSON.stringify({message: error.message}))
     }
 });
 

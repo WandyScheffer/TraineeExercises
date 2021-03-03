@@ -16,7 +16,7 @@ route.post('/', (req, res) => {
         res.status(201).send();
     } catch (error) {
         console.log(error);
-        res.send(JSON.stringify({message: error.message}))
+        res.status(400).send(JSON.stringify({message: error.message}))
     }
 });
 
