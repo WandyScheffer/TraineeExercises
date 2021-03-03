@@ -6,5 +6,11 @@ module.exports = {
     },
     inserir(fornecedor){
         return Modelo.create(fornecedor)
+    },
+    async buscaPorId(id){
+        const encontrado = await Modelo.findByPk(id);
+        if (!encontrado) throw new Error('Fornecedor não encontrado');
+        
+        return encontrado;
     }
 }

@@ -23,6 +23,17 @@ class Fornecedor {
         this.dataAtualizacao = resultado.dataAtualizacao
         this.versao = resultado.versao
     }
+
+    async buscaFornecedor(){
+        const resultado = await TabelaFornecedor.buscaPorId(this.id);
+        this.empresa = resultado.empresa
+        this.email = resultado.email
+        this.categoria = resultado.categoria
+        this.dataCriacao = resultado.dataCriacao
+        this.dataAtualizacao = resultado.dataAtualizacao
+        this.versao = resultado.versao
+
+    }
 }
 
 module.exports = Fornecedor;
