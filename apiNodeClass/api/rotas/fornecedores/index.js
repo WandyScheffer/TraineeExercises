@@ -7,7 +7,7 @@ roteador.get('/', async (req, res) => {
     res.send(JSON.stringify(resultados));
 })
 
-roteador.post('/', async (req, res) => {
+roteador.post('/', async (req, res, next) => {
     try {
         const dadosRecebidos = req.body;
         const fornecedor = new Fornecedor(dadosRecebidos);
@@ -15,11 +15,11 @@ roteador.post('/', async (req, res) => {
     
         res.status(201).send(JSON.stringify(fornecedor));    
     } catch (error) {
-        res.status(400).send(JSON.stringify({message: error.message}))
+        next(error);
     }
 })
 
-roteador.get('/:id', async (req, res) => {
+roteador.get('/:id', async (req, res, next) => {
     try {
         const { id } = req.params;
         const fornecedor = new Fornecedor({ id });
@@ -27,8 +27,7 @@ roteador.get('/:id', async (req, res) => {
         
         res.send(JSON.stringify(fornecedor));    
     } catch (error) {
-        console.log((error));
-        res.status(404).send(JSON.stringify({message: error.message}));
+        next(error)
     }
 })
 
@@ -52,7 +51,7 @@ roteador.put('/:id', async (req, res, next) => {
     
 })
 
-roteador.delete('/:id', async (req, res) => {
+roteador.delete('/:id', async (req, res, next) => {
     try {
 
         const { id } = req.params;
@@ -62,7 +61,7 @@ roteador.delete('/:id', async (req, res) => {
         res.status(204).send()
     
     } catch (error) {
-        res.status(404).send(JSON.stringify({message: error.message}))
+        next(error)
     }
     
 })
