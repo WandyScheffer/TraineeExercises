@@ -13,9 +13,9 @@ roteador.post('/', async (req, res) => {
         const fornecedor = new Fornecedor(dadosRecebidos);
         await fornecedor.criar();
     
-        res.send(JSON.stringify(fornecedor));    
+        res.status(201).send(JSON.stringify(fornecedor));    
     } catch (error) {
-        res.send(JSON.stringify({message: error.message}))
+        res.status(400).send(JSON.stringify({message: error.message}))
     }
 })
 
@@ -28,7 +28,7 @@ roteador.get('/:id', async (req, res) => {
         res.send(JSON.stringify(fornecedor));    
     } catch (error) {
         console.log((error));
-        res.send(JSON.stringify({message: error.message}));
+        res.status(404).send(JSON.stringify({message: error.message}));
     }
 })
 
@@ -47,7 +47,7 @@ roteador.put('/:id', async (req, res) => {
         res.status(204).send();
         
     } catch (error) {
-        res.send(JSON.stringify({message: error.message}))
+        res.status(400).send(JSON.stringify({message: error.message}))
     }
     
 })
@@ -59,10 +59,10 @@ roteador.delete('/:id', async (req, res) => {
         const fornecedor = new Fornecedor({id});
         await fornecedor.buscaFornecedor();
         await fornecedor.excluir();
-        res.send(JSON.stringify({message:'success!'}))
+        res.status(204).send()
     
     } catch (error) {
-        res.send(JSON.stringify({message: error.message}))
+        res.status(404).send(JSON.stringify({message: error.message}))
     }
     
 })
