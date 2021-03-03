@@ -8,11 +8,15 @@ roteador.get('/', async (req, res) => {
 })
 
 roteador.post('/', async (req, res) => {
-    const dadosRecebidos = req.body;
-    const fornecedor = new Fornecedor(dadosRecebidos);
-    await fornecedor.criar();
-
-    res.send(JSON.stringify(fornecedor));
+    try {
+        const dadosRecebidos = req.body;
+        const fornecedor = new Fornecedor(dadosRecebidos);
+        await fornecedor.criar();
+    
+        res.send(JSON.stringify(fornecedor));    
+    } catch (error) {
+        res.send(JSON.stringify({message: error.message}))
+    }
 })
 
 roteador.get('/:id', async (req, res) => {
@@ -42,6 +46,21 @@ roteador.put('/:id', async (req, res) => {
         // console.log(dados);
         res.status(204).send();
         
+    } catch (error) {
+        res.send(JSON.stringify({message: error.message}))
+    }
+    
+})
+
+roteador.delete('/:id', async (req, res) => {
+    try {
+
+        const { id } = req.params;
+        const fornecedor = new Fornecedor({id});
+        await fornecedor.buscaFornecedor();
+        await fornecedor.excluir();
+        res.send(JSON.stringify({message:'success!'}))
+    
     } catch (error) {
         res.send(JSON.stringify({message: error.message}))
     }

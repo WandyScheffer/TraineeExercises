@@ -12,6 +12,7 @@ class Fornecedor {
     }
 
     async criar(){
+        this.validar();
         const resultado = await TabelaFornecedor.inserir({
             empresa: this.empresa,
             email: this.email,
@@ -35,28 +36,41 @@ class Fornecedor {
     }
 
     async atualizar(){
-        // a princípio isso n é necessário, n entendi o pq no video essa linha foi inserida
-        // await TabelaFornecedor.buscaPorId(this.id);
+        await TabelaFornecedor.buscaPorId(this.id);
+        const dadosParaAtualizar = this.validar(false);
+        await TabelaFornecedor.atualizar(this.id, dadosParaAtualizar);
+    }
+    
+    async excluir(){
+        await TabelaFornecedor.exclui(this.id);
+    }
 
+    validar(parametrosObrigatorios = true){
         const campos = ['empresa', 'email', 'categoria'];
-        const dadosParaAtualizar = {};
-
-        campos.forEach(campo => {
-            const valor = this[campo]
-
-            if (typeof(valor)==='string' && valor.length > 0) {
-                dadosParaAtualizar[campo] = valor;
-            }
-        })
-
-        if (Object.keys(dadosParaAtualizar).length === 0) {
-            throw new Error('Não foram fornecidos dados para atualizar, ou estes eram inválidos...');
+        
+        if (parametrosObrigatorios) {
+            campos.forEach(campo => {
+                const valor = this[campo]
+                    
+                if (typeof(valor)!=='string' || valor.length === 0) {
+                    throw new Error(`Campo ${campo} está inválido`);
+                }
+            })    
         }
         
-        const [atualizado] = await TabelaFornecedor.atualizar(this.id, dadosParaAtualizar);
-        if (!atualizado) {
-            throw new Error('Não foi atualizado, usuário não encontrado...');
+        const dadosValidados = {};
+    
+        campos.forEach(campo => {
+            const valor = this[campo]                
+            if (typeof(valor)==='string' && valor.length > 0) {
+                dadosValidados[campo] = valor;
+            }
+        })
+            
+        if (Object.keys(dadosValidados).length === 0) {
+            throw new Error('Não foram fornecidos dados para atualizar, ou estes eram inválidos...');
         }
+        return dadosValidados;
     }
 }
 

@@ -21,5 +21,13 @@ module.exports = {
                 where: {id}
             }
         )
+    },
+
+    async exclui(id){
+        return Modelo.destroy({
+            where:{
+                id
+            }
+        })
     }
 }
