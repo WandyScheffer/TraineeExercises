@@ -13,6 +13,7 @@ cat_prod.forEach(item => console.log(item.name));
 
 
 console.log("\n---------------------------\n");
+// a condicional ternaria n faz sentido, pq não teria um "else"
 cat_prod.forEach(item => {
     return item.name=="Eletronicos" ? console.log(item) : null;
 })

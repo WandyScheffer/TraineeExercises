@@ -30,9 +30,18 @@ function mapPromise(promise, transformer){
 function squarePromise(numberPromise){
   return numberPromise
     .then(result => {
+      // uma opção melhor seria assim...
+      // const number = Number(result)
+      // if (Number.isNaN(number)) {
+      //   return Promise.reject(`Cannot convert '${result}' to a number!`);
+      // } else {
+      //   return Math.pow(number, 2);
+      // }
+
       if (typeof(result)=="number") {
         return Math.pow(result, 2);
       }else if(!Number.isNaN(parseInt(result))){
+        Number.is
         return Math.pow(parseInt(result), 2);
       }else{
         return Promise.reject(`Cannot convert '${result}' to a number!`);

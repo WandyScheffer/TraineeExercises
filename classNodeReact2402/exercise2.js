@@ -44,6 +44,8 @@ cat_prod.filter(item => {
 const newCat = cat_prod.map(categ => {
     let qt_prod = 0
     prod.forEach(itemProd => {
+        // talvez seja mais interessante usar um reduce no caso do contador
+        // ou melhor, usar o filter do idCat no produto... assim retorna array e posso usar o ".length"
         qt_prod += itemProd.id_categ == categ.id ? 1 : 0;
     })
     return {...categ, qt_prod};
