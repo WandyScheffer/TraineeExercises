@@ -10,24 +10,7 @@ const CampoInvalido = require('./erros/CampoInvalido');
 const DadosNaoFornecidos = require('./erros/DadosNaoFornecidos');
 const ValorNaoSuportado = require('./erros/ValorNaoSuportado');
 
-const acceptedFormats = require('./Serializador').acceptedFormats;
-
 app.use(bodyParser.json());
-app.use((req, res, next) => {
-    let requestedFormat = req.header('Accept');
-
-    if (requestedFormat === '*/*') {
-        requestedFormat = 'application/json';
-    }
-
-    if (!(acceptedFormats.some(item => item===requestedFormat))) {
-        res.status(406).end();
-        return;
-        // console.log('formato inválido: '+requestedFormat);
-    }
-    res.setHeader('Content-Type', requestedFormat);
-    next();
-})
 
 app.use('/api/fornecedores', route_fornecedores);
 
