@@ -28,8 +28,11 @@ roteador.get('/:id', async (req, res, next) => {
         const { id } = req.params;
         const fornecedor = new Fornecedor({ id });
         await fornecedor.buscaFornecedor();
-        const serializador = new SerializadorFornecedor(res.getHeader('Content-Type'));
-        res.send(serializador.serializar(fornecedor));    
+        const serializador = new SerializadorFornecedor(
+            res.getHeader('Content-Type'),
+            ['email', 'dataCriacao', 'dataAtualizacao', 'versao']
+        );
+        res.send(serializador.serializar(fornecedor));
     } catch (error) {
         next(error)
     }
@@ -39,35 +42,35 @@ roteador.put('/:id', async (req, res, next) => {
     try {
         const { id } = req.params;
         const dadosRecebidos = req.body;
-    
+
         const dados = Object.assign({}, dadosRecebidos, { id });
-        
+
         const fornecedor = new Fornecedor(dados);
-    
+
         await fornecedor.atualizar();
-        
+
         // console.log(dados);
         res.status(204).send();
-        
+
     } catch (error) {
         next(error);
     }
-    
+
 })
 
 roteador.delete('/:id', async (req, res, next) => {
     try {
 
         const { id } = req.params;
-        const fornecedor = new Fornecedor({id});
+        const fornecedor = new Fornecedor({ id });
         await fornecedor.buscaFornecedor();
         await fornecedor.excluir();
         res.status(204).send()
-    
+
     } catch (error) {
         next(error)
     }
-    
+
 })
 
 module.exports = roteador;

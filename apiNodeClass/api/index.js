@@ -9,7 +9,7 @@ const NaoEncontrado = require('./erros/NaoEncontrado');
 const CampoInvalido = require('./erros/CampoInvalido');
 const DadosNaoFornecidos = require('./erros/DadosNaoFornecidos');
 const ValorNaoSuportado = require('./erros/ValorNaoSuportado');
-const acceptedFormats = require('./Serializador').acceptedFormats;
+const { SerializadorErro, acceptedFormats } = require('./Serializador');
 
 app.use(bodyParser.json());
 app.use((req, res, next) => {
@@ -40,7 +40,14 @@ app.use((erro, req, res, next) => {
     }else if(erro instanceof ValorNaoSuportado){
         status = 406;
     }
-    res.status(status).send(JSON.stringify({message: erro.message, id: erro.idErro}))
+    
+    const serializador = new SerializadorErro(
+        res.getHeader('Content-Type') 
+    )
+    
+
+    retorno = serializador.serializar({message: erro.message, id: erro.idErro})
+    res.status(status).send(retorno);
 })
 
 app.listen(port, () => console.log(`Running on port ${port}`));
