@@ -2,6 +2,7 @@ const express = require('express');
 const ErrorBadRequest = require('./ErrorBadRequest');
 const ErrorNotFound = require('./ErrorNotFound');
 const route = express.Router();
+const { SerializadorUser } = require('../Serializador');
 
 const TabelaDeUsuarios = {
     tabela: [
@@ -22,7 +23,10 @@ const TabelaDeUsuarios = {
 }
 
 route.get('/', (req, res) => {
-    res.send(JSON.stringify(TabelaDeUsuarios.tabela));
+    const result = TabelaDeUsuarios.tabela;
+    const serializador = new SerializadorUser(res.getHeader('Content-Type'));
+
+    res.send(serializador.serializar(result));
 })
 
 route.put('/:idUsuario', async (requisicao, resposta) => {
