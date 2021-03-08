@@ -1,5 +1,24 @@
 const route = require('express').Router();
+const CategoryController = require('../../controllers/CategoryController');
 
-route.get('/', (req, res) => res.send('listagem de categorias'));
+// listagem de categorias
+route.get('/', CategoryController.listAll);
+
+// inserção de categoria
+route.post('/', CategoryController.create);
+
+// edição de categoria, desativando ou ativando, nome
+route.put('/:id', CategoryController.edit);
+
+// exclusão de categoria
+route.delete('/:id', CategoryController.exclude);
+
+
+// Bonûs a partir daqui
+// buscando categoria específica
+route.get('/:id', CategoryController.getByIdOrName);
+
+// buscando categoria por nome
+route.get('/:name', CategoryController.getByIdOrName);
 
 module.exports = route;
