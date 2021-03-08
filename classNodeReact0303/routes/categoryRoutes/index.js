@@ -16,9 +16,9 @@ route.delete('/:id', CategoryController.exclude);
 
 // Bonûs a partir daqui
 // buscando categoria específica
-route.get('/:id', CategoryController.getByIdOrName);
+route.get('/:id_or_name', CategoryController.getByIdOrName);
 
 // buscando categoria por nome
-route.get('/:name', CategoryController.getByIdOrName);
+// route.get('/:name', CategoryController.getByIdOrName);
 
 module.exports = route;
