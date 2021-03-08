@@ -21,7 +21,7 @@ const Category = {
     },
     async edit(req, res) {
         try {
-            // disparar erro de usuário não encontrado pelo id
+            // disparar erro de categoria não encontrada pelo id
             const { id } = req.params;
             // disparar erro caso nenhum dos campos for informado
             // ou caso os campos forem inválidos
@@ -40,7 +40,7 @@ const Category = {
     async exclude(req, res) {
         const t = await db.sequelize.transaction();
         try {
-            // disparar erro de usuário não encontrado
+            // disparar erro de categoria não encontrada
             const { id } = req.params;
 
             await db.Products.destroy(
@@ -55,7 +55,7 @@ const Category = {
 
             await t.commit();
             // passar status 204 e remover o retorno do 'send'
-            return res.status(200).send(JSON.stringify(destroy_category));
+            return res.status(204).send();
         } catch (error) {
             await t.rollback();
             return res.status(500).send(JSON.stringify({ message: error.message }));
