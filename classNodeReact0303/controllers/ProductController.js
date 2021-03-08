@@ -3,10 +3,10 @@ const db = require('../models');
 const Product = {
 
     async listAll(req, res) {
-        // definir um limit e um offset aqui...
-        // explorar possíveis erros também...
         try {
-            const result = await db.Products.findAll({include: db.Categorys});
+            const limit = Number(req.query.limit) || 10;
+            const offset = Number(req.query.offset) || 0;
+            const result = await db.Products.findAll({include: db.Categorys, limit, offset});
             const relevant_data = result.map( product => {
                 return {
                     id: product.id,
@@ -24,68 +24,116 @@ const Product = {
         }
     },
     async create(req, res) {
+        let res_status = 500;
         try {
             const { name, price, category_id } = req.body;
+
+            if ((typeof (name) !== 'string' || name.length === 0) || (typeof (price) !== 'number' || typeof(category_id)!== 'number')) {
+                res_status = 400;
+                throw new Error('Missing or invalid parameters!');
+            }
+            const verify_category = await db.Categorys.findByPk(category_id);
+            
+            if (!verify_category) {
+                res_status = 400;
+                throw new Error('Id category is invalid!');
+            }
+
             const success = await db.Products.create({ name, price, category_id });
             return res.status(201).send(JSON.stringify(success));
         } catch (error) {
-            return res.status(500).send(JSON.stringify({ message: error.message }));
+            return res.status(res_status).send(JSON.stringify({ message: error.message }));
         }
     },
     async edit(req, res) {
+        let res_status = 500;
         try {
-            // disparar erro de usuário não encontrado pelo id
+
             const { id } = req.params;
-            // disparar erro caso nenhum dos campos for informado
-            // ou caso os campos forem inválidos
+            if (Number.isNaN(Number(id))) {
+                res_status = 400;
+                throw new Error('id should be a number!')
+            }
+            
+            const verify_product = await db.Products.findByPk(id)
+            if (!verify_product) {
+                res_status = 404;
+                throw new Error('product not found!')
+            }
+            
             const { name, price, category_id } = req.body;
-            // disparar erro caso o retorno for 0 no success??
+
+            if ((typeof (name) !== 'string' || name.length === 0) && (typeof (price) !== 'number' && typeof(category_id)!== 'number')) {
+                res_status = 400;
+                throw new Error('Missing or invalid parameters!');
+            }
+
             const success = await db.Products.update(
                 { name, price, category_id },
                 { where: { id } }
             );
-            // mudar o status para 204 e mudar o retorno no 'send'
-            return res.status(200).send(JSON.stringify(success));
+
+            if (!success){
+                res_status = 400;
+                throw new Error("Failed to edit, it's probably because of some incorrect parameter...");
+            } 
+            
+            return res.status(204).send();
         } catch (error) {
-            return res.status(500).send(JSON.stringify({ message: error.message }));
+            return res.status(res_status).send(JSON.stringify({ message: error.message }));
         }
     },
     async exclude(req, res) {
-        try {
-            // disparar erro de produto não encontrado
+        let res_status = 500;
+        try {            
             const { id } = req.params;
+            if (Number.isNaN(Number(id))) {
+                res_status = 400;
+                throw new Error('id should be a number!')
+            }
+
+            const verify_product = await db.Products.findByPk(id);
+            
+            if (!verify_product) {
+                res_status = 404;
+                throw new Error('product not found!')
+            }
 
             await db.Products.destroy({where: { id: id }});
 
-            // passar status 204 e remover o retorno do 'send'
-            return res.status(200).send(JSON.stringify({message: 'removed'}));
+            
+            return res.status(204).send(JSON.stringify({message: 'removed'}));
         } catch (error) {
-            return res.status(500).send(JSON.stringify({ message: error.message }));
+            return res.status(res_status).send(JSON.stringify({ message: error.message }));
         }
     },
     async getByIdOrName(req, res) {
-        // verificar possíveis erros disparados aqui também...
+
+        let res_status = 500;
         try {
             const {id_or_name} = req.params;
             
             let result;
             if (!Number.isNaN(Number(id_or_name))) {
                 result = await db.Products.findByPk(id_or_name, {include: db.Categorys});
-            }else{
+            }else if(typeof(id_or_name)==='string' && id_or_name.length > 0){
                 result = await db.Products.findOne({
                     where:{name:id_or_name},
                     include: db.Categorys
                 });
+            }else{
+                res_status = 400;
+                throw new Error("Failed, it's probably because of some incorrect parameter...");
             }
 
-
             if (result === null) {
+                res_status = 404;
                 throw new Error('Product not found!');
             }
 
             return res.status(200).send(JSON.stringify(result));
         } catch (error) {
-            return res.status(404).send(JSON.stringify({message: error.message}));
+            return res.status(res_status).send(JSON.stringify({message: error.message}));
             
         }
     }
