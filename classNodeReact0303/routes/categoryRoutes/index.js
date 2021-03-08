@@ -13,12 +13,15 @@ route.put('/:id', CategoryController.edit);
 // exclusão de categoria
 route.delete('/:id', CategoryController.exclude);
 
+// PRECISO CRIAR UMA ROTA QUE RETORNE TODAS AS CATEGORIAS ATIVAS
+// COM OS SEUS PRODUTOS QUE CUSTAREM MAIS QUE 10
+route.get('/active', CategoryController.getActive);
 
 // Bonûs a partir daqui
 // buscando categoria específica
 route.get('/:id_or_name', CategoryController.getByIdOrName);
 
-// buscando categoria por nome
-// route.get('/:name', CategoryController.getByIdOrName);
+
+
 
 module.exports = route;

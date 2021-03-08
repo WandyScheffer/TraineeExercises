@@ -86,6 +86,27 @@ const Category = {
             return res.status(404).send(JSON.stringify({message: error.message}));
             
         }
+    },
+    async getActive(req, res){
+        try {
+            const {minprice} = req.query;
+            const result = await db.Categorys.findAll({
+                where:{status:true},
+                include:{
+                    model:db.Products,
+                    where:{
+                        price:{
+                            [db.Sequelize.Op.gt]:minprice
+                        }
+                    }
+                }
+            });
+
+            return res.status(200).send(JSON.stringify(result));
+        } catch (error) {
+            
+            return res.status(500).send(JSON.stringify({message: error.message}));
+        }
     }
 }
 
