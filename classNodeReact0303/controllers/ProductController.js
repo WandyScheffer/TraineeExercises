@@ -1,4 +1,5 @@
 const db = require('../models');
+const serializator = require('../routes/serializator');
 
 const Product = {
 
@@ -18,9 +19,9 @@ const Product = {
                 };
             })
             
-            return res.status(200).send(JSON.stringify(relevant_data));
+            return res.status(200).send(serializator.serializing(relevant_data, res.getHeader('Content-Type')));
         } catch (error) {
-            return res.status(500).send(JSON.stringify({ message: error.message }));
+            return res.status(500).send(serializator.serializing({ message: error.message }, res.getHeader('Content-Type')));
         }
     },
     async create(req, res) {
@@ -40,9 +41,9 @@ const Product = {
             }
 
             const success = await db.Products.create({ name, price, category_id });
-            return res.status(201).send(JSON.stringify(success));
+            return res.status(201).send(serializator.serializing(success, res.getHeader('Content-Type')));
         } catch (error) {
-            return res.status(res_status).send(JSON.stringify({ message: error.message }));
+            return res.status(500).send(serializator.serializing({ message: error.message }, res.getHeader('Content-Type')));
         }
     },
     async edit(req, res) {
@@ -80,7 +81,7 @@ const Product = {
             
             return res.status(204).send();
         } catch (error) {
-            return res.status(res_status).send(JSON.stringify({ message: error.message }));
+            return res.status(500).send(serializator.serializing({ message: error.message }, res.getHeader('Content-Type')));
         }
     },
     async exclude(req, res) {
@@ -102,9 +103,9 @@ const Product = {
             await db.Products.destroy({where: { id: id }});
 
             
-            return res.status(204).send(JSON.stringify({message: 'removed'}));
+            return res.status(204).send();
         } catch (error) {
-            return res.status(res_status).send(JSON.stringify({ message: error.message }));
+            return res.status(500).send(serializator.serializing({ message: error.message }, res.getHeader('Content-Type')));
         }
     },
     async getByIdOrName(req, res) {
@@ -131,9 +132,9 @@ const Product = {
                 throw new Error('Product not found!');
             }
 
-            return res.status(200).send(JSON.stringify(result));
+            return res.status(200).send(serializator.serializing(result, res.getHeader('Content-Type')));
         } catch (error) {
-            return res.status(res_status).send(JSON.stringify({message: error.message}));
+            return res.status(500).send(serializator.serializing({ message: error.message }, res.getHeader('Content-Type')));
             
         }
     }

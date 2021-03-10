@@ -27,7 +27,7 @@ const serializator = {
                         }
                     })
                 } else {
-                    const objectItem = item.dataValues;
+                    const objectItem = item.dataValues ? item.dataValues : item;
                     for (const key in objectItem) {
                         if (Array.isArray(objectItem[key])) {
                             objectItem[key] = objectItem[key].map(subItem => {
@@ -43,7 +43,7 @@ const serializator = {
                     }
                     const subTagModel = this.verifyInstanceAndQuantity(item);
                     return {
-                        [subTagModel]: item.dataValues
+                        [subTagModel]: objectItem
                     }
 
                 }
@@ -67,6 +67,8 @@ const serializator = {
                             [subTagModel]: item.dataValues
                         }
                     })
+                }else if(data[key].dataValues){
+                    data[key] = data[key].dataValues;
                 }
             }
         }
