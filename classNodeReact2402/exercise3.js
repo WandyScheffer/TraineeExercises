@@ -47,22 +47,17 @@ cat_prod.filter(itemCat => {
 
 
 console.log("\nProdutos de categorias desativadas:");
-const desactivateProducts = cat_prod
+const desactivatedCat = cat_prod
 .filter(itemCat =>  !(itemCat.status))
-.reduce( (reduceProducts, currentCategory, index) => {
-    if (index===1) reduceProducts = reduceProducts.products;
-    return [...reduceProducts, ...currentCategory.products];
-})
-console.table(desactivateProducts);
+
+const desactivatedProducts = desactivatedCat.map(categ => 
+    categ.products.map(product => ({...product}))
+);
+
+console.table(desactivatedProducts.flat());
 
 
-cat_prod.forEach(itemCat => {
-    let qt_prod = 0;
-    itemCat.products.forEach(() => {
-        qt_prod+=1;
-    });
-    itemCat.qt_products = qt_prod;
-})
+const newCat = cat_prod.map(itemCat => ({...itemCat, qt_products:itemCat.products.length}))
 
 console.log("\nCategorias com a quantidade de produtos que cada uma tem: \n");
-console.table(cat_prod);
+console.table(newCat);
