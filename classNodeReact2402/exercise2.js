@@ -3,16 +3,19 @@
 const cat_prod = [];
 const prod = [];
 
-cat_prod.push({id: 1, name: "Higiene", status: true});
-cat_prod.push({id: 2, name: "Eletronicos", status: true});
-cat_prod.push({id: 3, name: "Outros", status: false});
-cat_prod.push({id: 4, name: "Moda", status: false});
-cat_prod.push({id: 5, name: "Utensilios", status: false});
+cat_prod.push(
+    {id: 1, name: "Higiene", status: true},
+    {id: 2, name: "Eletronicos", status: true},
+    {id: 3, name: "Outros", status: false},
+    {id: 4, name: "Moda", status: false},
+    {id: 5, name: "Utensilios", status: false}
+);
 
-prod.push({id: 1, name: "Celular", price: 2.00, id_categ: 2});
-prod.push({id: 2, name: "Sabonete", price: 9.60, id_categ: 1});
-prod.push({id: 3, name: "Notebook", price: 8.10, id_categ: 2});
-// prod.push({id: 4, name: "Batata", price: 8.10, id_categ: 3});
+prod.push(
+    {id: 1, name: "Celular", price: 2.00, id_categ: 2},
+    {id: 2, name: "Sabonete", price: 9.60, id_categ: 1},
+    {id: 3, name: "Notebook", price: 8.10, id_categ: 2}
+);
 
 console.log("\nNomes de produtos eletronicos:");
 
@@ -27,7 +30,10 @@ const filteredProd = prod.filter(item => item.price < 10)
     .map(filteredItem => filteredItem.id_categ)
 
 cat_prod.forEach((item) => {
-    filteredProd.some((id) => id == item.id) ? console.log(item.name) : null;
+    const verify = filteredProd.some((id) => id == item.id);
+    if (verify) {
+        console.log(item.name) 
+    }
 })
 
 console.log("\nProdutos de categorias desativadas:");
@@ -35,20 +41,16 @@ cat_prod.filter(item => {
     return !item.status
 }).forEach(item => {
     prod.forEach(product => {
-        product.id_categ == item.id ? console.log(product.name) : null;      
+        if (product.id_categ == item.id) {
+            console.log(product.name) 
+        }
     }) 
 })
 
 
-
 const newCat = cat_prod.map(categ => {
-    let qt_prod = 0
-    prod.forEach(itemProd => {
-        // talvez seja mais interessante usar um reduce no caso do contador
-        // ou melhor, usar o filter do idCat no produto... assim retorna array e posso usar o ".length"
-        qt_prod += itemProd.id_categ == categ.id ? 1 : 0;
-    })
-    return {...categ, qt_prod};
+    const productsOfEachCategory = prod.filter(itemProd => categ.id === itemProd.id_categ)
+    return {...categ, qt_prod: productsOfEachCategory.length};
 });
 
 console.log("\n");

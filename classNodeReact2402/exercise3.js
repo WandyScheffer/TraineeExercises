@@ -16,7 +16,7 @@ cat_prod.push({id: 2, name: "Eletronicos", status: true, products: [
 
 cat_prod.push({id: 3, name: "Alimentos", status: false, products: [
     {id:7, name:"batata", price:7},
-    {id:8, name:"alho", price:8},
+    {id:8, name:"alho", price:5},
     {id:9, name:"cebola", price:9},
 ]});
 
@@ -45,11 +45,16 @@ cat_prod.filter(itemCat => {
     console.log(itemCat.name) : null
 })
 
+
 console.log("\nProdutos de categorias desativadas:");
-cat_prod.filter(itemCat => {
-    return !(itemCat.status) ? 
-    console.log(itemCat.products) : null
+const desactivateProducts = cat_prod
+.filter(itemCat =>  !(itemCat.status))
+.reduce( (reduceProducts, currentCategory, index) => {
+    if (index===1) reduceProducts = reduceProducts.products;
+    return [...reduceProducts, ...currentCategory.products];
 })
+console.table(desactivateProducts);
+
 
 cat_prod.forEach(itemCat => {
     let qt_prod = 0;
@@ -59,4 +64,5 @@ cat_prod.forEach(itemCat => {
     itemCat.qt_products = qt_prod;
 })
 
-console.log(cat_prod);
+console.log("\nCategorias com a quantidade de produtos que cada uma tem: \n");
+console.table(cat_prod);

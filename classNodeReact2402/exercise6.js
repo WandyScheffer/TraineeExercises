@@ -1,15 +1,12 @@
 var list = []
-const databaseInsert = function (data, callback) {
+const databaseInsert = function (data) {
     return new Promise((resolve,reject) => {
-        setTimeout(function () {
+        setTimeout(() => {
             list.push(data);
-            if (callback) {
-                resolve(callback());
-            }
+            resolve(list);
         }, 0);
     })
 };
 ///////////////////////
-databaseInsert({meuobjeto: "a"}, () => {
-    console.log("lista: ", list);
-}).then();
+databaseInsert({meuobjeto: "a"})
+.then( result => console.table(result));
