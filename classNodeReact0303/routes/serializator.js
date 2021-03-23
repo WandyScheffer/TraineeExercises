@@ -10,85 +10,75 @@ const serializator = {
         return jsontoxml(data);
     },
     filterData(data) {
-        let tagRoot;
-
+        let filtered_data;
         if (Array.isArray(data)) {
-            data = data.map(item => {
-
-                tagRoot = this.verifyInstanceAndQuantity(item, data);
-
-                if (Array.isArray(item)) {
-                    item = item.map(subItem => {
-                        
-                        const subTagModel = this.verifyInstanceAndQuantity(subItem, item);
-
-                        return {
-                            [subTagModel]: subItem.dataValues
-                        }
-                    })
-                } else {
-                    const objectItem = item.dataValues ? item.dataValues : item;
-                    for (const key in objectItem) {
-                        if (Array.isArray(objectItem[key])) {
-                            objectItem[key] = objectItem[key].map(subItem => {
-
-                                const subTagModel = this.verifyInstanceAndQuantity(subItem);
-
-                                return {
-                                    [subTagModel]: subItem.dataValues
-                                }
-
-                            })
-                        }
-                    }
-                    const subTagModel = this.verifyInstanceAndQuantity(item);
-                    return {
-                        [subTagModel]: objectItem
-                    }
-
-                }
-
-            })
+            filtered_data = this.whenIsArray(data);
         } else {
-            tagRoot = this.verifyInstanceAndQuantity(data);
+            filtered_data = this.whenIsObject(data);
+        }
+        // it should return an "Array" containing "JSON" adapted to convert to XML or a JSON adapted...
+        return filtered_data;
+    },
 
-            if (data.message) {
-                return {error: data};
+    whenIsObject(data) {
+        const tagRoot = this.verifyInstanceAndQuantity(data, false);
+
+        if (data.message) {
+            return { error: data };
+        }
+
+        const adapted_json = data.dataValues;
+        for (const key in adapted_json) {
+            if (Array.isArray(adapted_json[key])) {
+                adapted_json[key] = this.whenIsArray(adapted_json[key], true)
+            } else if (adapted_json[key].dataValues) {                
+                adapted_json[key] = adapted_json[key].dataValues;
             }
-
-            data = data.dataValues;
-            for (const key in data) {
-                if (Array.isArray(data[key])) {
-                    data[key] = data[key].map(item => {
-
-                        const subTagModel = this.verifyInstanceAndQuantity(item);
-
-                        return {
-                            [subTagModel]: item.dataValues
-                        }
-                    })
-                }else if(data[key].dataValues){
-                    data[key] = data[key].dataValues;
+        }
+        return { [tagRoot]: adapted_json };
+    },
+    whenIsArray(data, justValue = false) {
+        const tagRoot = this.verifyInstanceAndQuantity(data[0]);
+        const adapted_json = data.map((item) => {
+            if (Array.isArray(item)) {
+                item = this.whenIsArray(item);
+                return { ...item.dataValues };
+            } else {
+                const objectItem = item.dataValues;
+                for (const key in objectItem) {
+                    if (Array.isArray(objectItem[key])) {
+                        objectItem[key] = this.whenIsArray(
+                            objectItem[key],
+                            true
+                        );
+                    } else if (
+                        objectItem[key] instanceof db.Categorys ||
+                        objectItem[key] instanceof db.Products
+                    ) {
+                        objectItem[key] = objectItem[key].dataValues;
+                    }
                 }
+                const subTag = this.verifyInstanceAndQuantity(item, false);
+                return { [subTag]: objectItem };
             }
-        }
+        });
+        return !justValue ? { [tagRoot]: adapted_json } : adapted_json;
+    },
 
-        return { [tagRoot]: data };
-    },
-    verifyInstanceAndQuantity(model, containsModel){
-        
-        if (Array.isArray(containsModel)) {
-            return model instanceof db.Categorys ? "categorys" : "products";
+    verifyInstanceAndQuantity(model, moreThanOneInstance = true) {
+        if (moreThanOneInstance) {
+            return model instanceof db.Categorys ? "Categorys" : "Products";
         }
-        return model instanceof db.Categorys ? "category" : "product";
+        return model instanceof db.Categorys ? "Category" : "Product";
     },
+
     serializing(data, contentType) {
-        if (contentType === 'application/json') {
+        if (contentType === "application/json") {
             return this.json(data);
-        } else if (contentType === 'application/xml') {
-            return this.xml(data)
+        } else if (contentType === "application/xml") {
+            return this.xml(data);
         }
-    }
-}
+    },
+};
 
 module.exports = serializator;
